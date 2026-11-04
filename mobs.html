@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Mobs</title>
+    <title>All Minecraft Mobs</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-    <h1>👾 MINECRAFT MOBS</h1>
+    <h1>👾 MINECRAFT MOB DATABASE</h1>
     <p>Discover the creatures of Minecraft!</p>
 </header>
 
@@ -20,40 +20,152 @@
 </nav>
 
 <main>
-    <h2>Popular Minecraft Mobs</h2>
+    <h2>All Minecraft Mobs A–Z</h2>
+
+    <p>
+        Explore the amazing creatures of Minecraft!
+        Here you can find the mobs in alphabetical order.
+    </p>
 
     <div class="card">
-        <h2>💚 Creeper</h2>
-        <p>
-            Creepers are hostile mobs that
-            approach players and explode.
-        </p>
-    </div>
+        <h2>📖 Mob Encyclopedia</h2>
+        <p>Browse the complete alphabetical list of Minecraft mobs.</p>
 
-    <div class="card">
-        <h2>👁 Enderman</h2>
-        <p>
-            Endermen are mysterious creatures
-            that can teleport and pick up blocks.
-        </p>
-    </div>
+        <input
+            type="text"
+            id="mobSearch"
+            placeholder="Search for a mob..."
+            oninput="filterMobs()"
+            style="width:100%; padding:12px; border-radius:5px;"
+        >
 
-    <div class="card">
-        <h2>🧟 Zombie</h2>
-        <p>
-            Zombies are common hostile mobs
-            that appear in dark places.
+        <ul class="mob-list" id="mobList">
+            <li>Allay</li>
+            <li>Armadillo</li>
+            <li>Axolotl</li>
+            <li>Bat</li>
+            <li>Bee</li>
+            <li>Blaze</li>
+            <li>Bogged</li>
+            <li>Breeze</li>
+            <li>Camel</li>
+            <li>Camel Husk</li>
+            <li>Cat</li>
+            <li>Cave Spider</li>
+            <li>Chicken</li>
+            <li>Cod</li>
+            <li>Copper Golem</li>
+            <li>Cow</li>
+            <li>Creaking</li>
+            <li>Creeper</li>
+            <li>Dolphin</li>
+            <li>Donkey</li>
+            <li>Drowned</li>
+            <li>Elder Guardian</li>
+            <li>Ender Dragon</li>
+            <li>Enderman</li>
+            <li>Endermite</li>
+            <li>Evoker</li>
+            <li>Fox</li>
+            <li>Frog</li>
+            <li>Ghast</li>
+            <li>Glow Squid</li>
+            <li>Goat</li>
+            <li>Guardian</li>
+            <li>Happy Ghast</li>
+            <li>Hoglin</li>
+            <li>Horse</li>
+            <li>Husk</li>
+            <li>Iron Golem</li>
+            <li>Llama</li>
+            <li>Magma Cube</li>
+            <li>Mooshroom</li>
+            <li>Mule</li>
+            <li>Nautilus</li>
+            <li>Ocelot</li>
+            <li>Panda</li>
+            <li>Parched</li>
+            <li>Parrot</li>
+            <li>Phantom</li>
+            <li>Pig</li>
+            <li>Piglin</li>
+            <li>Piglin Brute</li>
+            <li>Pillager</li>
+            <li>Polar Bear</li>
+            <li>Pufferfish</li>
+            <li>Rabbit</li>
+            <li>Ravager</li>
+            <li>Salmon</li>
+            <li>Sheep</li>
+            <li>Shulker</li>
+            <li>Silverfish</li>
+            <li>Skeleton</li>
+            <li>Skeleton Horse</li>
+            <li>Slime</li>
+            <li>Sniffer</li>
+            <li>Snow Golem</li>
+            <li>Spider</li>
+            <li>Squid</li>
+            <li>Stray</li>
+            <li>Strider</li>
+            <li>Sulfur Cube</li>
+            <li>Tadpole</li>
+            <li>Trader Llama</li>
+            <li>Tropical Fish</li>
+            <li>Turtle</li>
+            <li>Vex</li>
+            <li>Villager</li>
+            <li>Vindicator</li>
+            <li>Wandering Trader</li>
+            <li>Warden</li>
+            <li>Witch</li>
+            <li>Wither</li>
+            <li>Wither Skeleton</li>
+            <li>Wolf</li>
+            <li>Zoglin</li>
+            <li>Zombie</li>
+            <li>Zombie Horse</li>
+            <li>Zombie Nautilus</li>
+            <li>Zombie Villager</li>
+            <li>Zombified Piglin</li>
+        </ul>
+
+        <p id="noResults" style="display:none;">
+            No mobs found!
         </p>
     </div>
 
     <a class="button" href="index.html">
         ← Back to Home
     </a>
+
 </main>
 
 <footer>
     Minecraft Facts | Fan Website
 </footer>
+
+<script>
+function filterMobs() {
+    const search = document.getElementById("mobSearch")
+        .value.toLowerCase();
+
+    const mobs = document.querySelectorAll("#mobList li");
+    let found = 0;
+
+    mobs.forEach(mob => {
+        const matches = mob.textContent.toLowerCase()
+            .includes(search);
+
+        mob.style.display = matches ? "" : "none";
+
+        if (matches) found++;
+    });
+
+    document.getElementById("noResults").style.display =
+        found === 0 ? "block" : "none";
+}
+</script>
 
 </body>
 </html>
