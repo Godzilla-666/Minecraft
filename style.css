@@ -87,3 +87,27 @@ footer {
     color: #b8cbb5;
 }
 
+
+
+.mob-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.mob-list li {
+    background: #354d35;
+    border: 2px solid #527c43;
+    padding: 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.mob-list li:hover {
+    background: #527c43;
+    transform: translateY(-3px);
+    border-color: #9be36c;
+}
