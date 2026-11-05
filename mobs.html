@@ -1,1 +1,329 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Mob Wiki</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+#mobList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.mob-card {
+    background: #293b2c;
+    border: 2px solid #527c43;
+    padding: 18px;
+    border-radius: 9px;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    transition: .2s;
+}
+
+.mob-card:hover {
+    background: #405d39;
+    transform: translateY(-4px);
+    border-color: #9be36c;
+}
+
+.mob-card h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+#mobSearch {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 14px;
+    margin: 15px 0 25px;
+    border-radius: 7px;
+    border: 2px solid #527c43;
+    font-size: 16px;
+}
+
+#details {
+    display: none;
+}
+
+.info-box {
+    background: #293b2c;
+    border: 1px solid #527c43;
+    border-radius: 9px;
+    padding: 18px;
+    margin: 15px 0;
+}
+
+.wiki-link {
+    color: #9be36c;
+}
+
+.back-button {
+    background: #5b963e;
+    color: white;
+    border: 2px solid #9be36c;
+    border-radius: 6px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>MINECRAFT MOB WIKI</h1>
+    <p>Discover the mobs in Minecraft Java Edition!</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="mobs.html">Mobs</a>
+</nav>
+
+<main>
+
+    <section id="listSection">
+        <h2>Minecraft Mob Database</h2>
+        <p>Select a mob to view its information.</p>
+
+        <input
+            id="mobSearch"
+            type="text"
+            placeholder="Search for a mob..."
+            aria-label="Search for a mob"
+        >
+
+        <div id="mobList"></div>
+        <p id="noResults" style="display:none">No mobs found.</p>
+    </section>
+
+    <section id="details">
+
+        <button class="back-button" id="backButton" type="button">
+            Back to Mobs
+        </button>
+
+        <div class="info-box">
+            <h1 id="mobName"></h1>
+
+            <p id="mobInfo">
+                Detailed information for this mob has not been added to this page yet.
+            </p>
+
+            <p>
+                <a
+                    id="wikiLink"
+                    class="wiki-link"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Open this mob's Minecraft Wiki page
+                </a>
+            </p>
+        </div>
+
+        <button class="back-button" id="backButtonBottom" type="button">
+            Back to Mobs
+        </button>
+
+    </section>
+
+</main>
+
+<footer>
+    Minecraft Mob Wiki | Java Edition Fan Website
+</footer>
+
+<script>
+
+const mobs = [
+    "Allay",
+    "Armadillo",
+    "Axolotl",
+    "Bat",
+    "Bee",
+    "Blaze",
+    "Bogged",
+    "Breeze",
+    "Camel",
+    "Camel Husk",
+    "Cat",
+    "Cave Spider",
+    "Chicken",
+    "Cod",
+    "Copper Golem",
+    "Cow",
+    "Creaking",
+    "Creeper",
+    "Dolphin",
+    "Donkey",
+    "Drowned",
+    "Elder Guardian",
+    "Ender Dragon",
+    "Enderman",
+    "Endermite",
+    "Evoker",
+    "Fox",
+    "Frog",
+    "Ghast",
+    "Giant",
+    "Glow Squid",
+    "Goat",
+    "Guardian",
+    "Happy Ghast",
+    "Hoglin",
+    "Horse",
+    "Husk",
+    "Illusioner",
+    "Iron Golem",
+    "Llama",
+    "Magma Cube",
+    "Mannequin",
+    "Mooshroom",
+    "Mule",
+    "Nautilus",
+    "Ocelot",
+    "Panda",
+    "Parched",
+    "Parrot",
+    "Phantom",
+    "Pig",
+    "Piglin",
+    "Piglin Brute",
+    "Pillager",
+    "Polar Bear",
+    "Pufferfish",
+    "Rabbit",
+    "Ravager",
+    "Salmon",
+    "Sheep",
+    "Shulker",
+    "Silverfish",
+    "Skeleton",
+    "Skeleton Horse",
+    "Slime",
+    "Sniffer",
+    "Snow Golem",
+    "Spider",
+    "Squid",
+    "Stray",
+    "Strider",
+    "Sulfur Cube",
+    "Tadpole",
+    "Trader Llama",
+    "Tropical Fish",
+    "Turtle",
+    "Vex",
+    "Villager",
+    "Vindicator",
+    "Wandering Trader",
+    "Warden",
+    "Witch",
+    "Wither",
+    "Wither Skeleton",
+    "Wolf",
+    "Zoglin",
+    "Zombie",
+    "Zombie Horse",
+    "Zombie Nautilus",
+    "Zombie Villager",
+    "Zombified Piglin"
+];
+
+const mobList = document.getElementById("mobList");
+const searchInput = document.getElementById("mobSearch");
+const listSection = document.getElementById("listSection");
+const detailsSection = document.getElementById("details");
+
+function renderMobs() {
+
+    const search = searchInput.value.trim().toLowerCase();
+
+    const filtered = mobs.filter(name =>
+        name.toLowerCase().includes(search)
+    );
+
+    mobList.innerHTML = "";
+
+    filtered.forEach(name => {
+
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "mob-card";
+
+        const heading = document.createElement("h3");
+        heading.textContent = name;
+
+        card.appendChild(heading);
+
+        card.addEventListener("click", () => showMob(name));
+
+        mobList.appendChild(card);
+    });
+
+    document.getElementById("noResults").style.display =
+        filtered.length === 0 ? "block" : "none";
+}
+
+function showMob(name) {
+
+    document.getElementById("mobName").textContent = name;
+
+    document.getElementById("mobInfo").textContent =
+        "Detailed information for this mob has not been added to this page yet.";
+
+    const wikiSlug = name.replaceAll(" ", "_");
+
+    document.getElementById("wikiLink").href =
+        "https://minecraft.wiki/w/" + encodeURIComponent(wikiSlug);
+
+    listSection.style.display = "none";
+    detailsSection.style.display = "block";
+
+    history.replaceState(null, "", "#" + encodeURIComponent(name));
+
+    window.scrollTo(0, 0);
+}
+
+function showList() {
+
+    detailsSection.style.display = "none";
+    listSection.style.display = "block";
+
+    history.replaceState(null, "", window.location.pathname);
+
+    window.scrollTo(0, 0);
+}
+
+searchInput.addEventListener("input", renderMobs);
+
+document.getElementById("backButton")
+    .addEventListener("click", showList);
+
+document.getElementById("backButtonBottom")
+    .addEventListener("click", showList);
+
+renderMobs();
+
+if (location.hash) {
+
+    const name = decodeURIComponent(location.hash.substring(1));
+
+    if (mobs.includes(name)) {
+        showMob(name);
+    }
+}
+
+</script>
+
+</body>
+</html>
+
