@@ -58,8 +58,9 @@
     margin: 15px 0;
 }
 
-.wiki-link {
+.info-box h3 {
     color: #9be36c;
+    margin-top: 0;
 }
 
 .back-button {
@@ -72,6 +73,12 @@
     font-weight: bold;
     margin-bottom: 20px;
 }
+
+.mob-facts {
+    line-height: 1.9;
+    white-space: pre-line;
+}
+
 </style>
 </head>
 
@@ -112,22 +119,31 @@
 
         <div class="info-box">
             <h1 id="mobName"></h1>
+        </div>
 
-            <p id="mobInfo">
-                Detailed information for this mob has not been added to this page yet.
-            </p>
+        <div class="info-box">
+            <h3>Occurrence</h3>
+            <div id="mobSpawn" class="mob-facts"></div>
+        </div>
 
-            <p>
-                <a
-                    id="wikiLink"
-                    class="wiki-link"
-                    href="#"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Open this mob's Minecraft Wiki page
-                </a>
-            </p>
+        <div class="info-box">
+            <h3>Behavior</h3>
+            <div id="mobBehavior" class="mob-facts"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>Health</h3>
+            <div id="mobHealth" class="mob-facts"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>Drops</h3>
+            <div id="mobDrops" class="mob-facts"></div>
+        </div>
+
+        <div class="info-box">
+            <h3>Interesting Facts</h3>
+            <div id="mobFacts" class="mob-facts"></div>
         </div>
 
         <button class="back-button" id="backButtonBottom" type="button">
@@ -211,7 +227,6 @@ const mobs = [
     "Skeleton Horse",
     "Slime",
     "Sniffer",
-    "Snow Golem",
     "Spider",
     "Squid",
     "Stray",
@@ -237,6 +252,739 @@ const mobs = [
     "Zombie Villager",
     "Zombified Piglin"
 ];
+
+/*
+Each entry contains:
+[Occurrence, Behavior, Health, Drops, Interesting facts]
+
+Health is shown in HP.
+Some drops depend on the way the mob is defeated,
+Looting, or other special conditions.
+*/
+
+const mobData = {
+
+"Allay": [
+"Overworld: Woodland Mansions and Pillager Outposts, inside cages.",
+"Passive. Collects items that match the item it is given.",
+"20 HP (10 hearts).",
+"No regular drops.",
+"Allays can duplicate when given an Amethyst Shard while dancing near a Jukebox. They can bring collected items to Note Blocks."
+],
+
+"Armadillo": [
+"Overworld: Savanna, Savanna Plateau, Windswept Savanna and Badlands biomes.",
+"Passive. Rolls into a ball when it senses danger.",
+"12 HP (6 hearts).",
+"Does not drop regular items. Brushing it gives 1 Armadillo Scute.",
+"Armadillos curl up when threatened. They can be bred with Spider Eyes."
+],
+
+"Axolotl": [
+"Overworld: Lush Caves, in water under suitable spawning conditions.",
+"Passive toward players. Attacks many aquatic hostile mobs.",
+"14 HP (7 hearts).",
+"No regular item drops.",
+"Axolotls have several colors. They can play dead to recover health and may help players fighting underwater enemies."
+],
+
+"Bat": [
+"Overworld: Underground caves in dark areas.",
+"Passive. Flies around and hangs upside down.",
+"6 HP (3 hearts).",
+"No drops and no experience.",
+"Bats are ambient mobs. They do not attack players."
+],
+
+"Bee": [
+"Overworld: Bee nests in flower forests, plains, meadows and other suitable biomes.",
+"Neutral. Attacks when it or its nest is threatened.",
+"10 HP (5 hearts).",
+"No regular drops when killed. Honeycomb and Honey Bottles are collected from full nests or hives.",
+"Bees pollinate crops. A lit campfire under a nest or hive calms bees during harvesting."
+],
+
+"Blaze": [
+"Nether: Nether Fortresses.",
+"Hostile. Shoots fireballs at players.",
+"20 HP (10 hearts).",
+"0–1 Blaze Rod. Looting can increase the maximum.",
+"Blazes are immune to fire and lava. Blaze Rods are used to make Blaze Powder."
+],
+
+"Bogged": [
+"Overworld: Swamps, Mangrove Swamps and Trial Chambers.",
+"Hostile. Shoots poison arrows.",
+"16 HP (8 hearts).",
+"0–2 Bones and 0–2 Arrows. May drop its Bow. Shearing it gives 2 Mushrooms.",
+"Bogged are a moss-covered Skeleton variant. Their arrows can poison players."
+],
+
+"Breeze": [
+"Overworld: Trial Chambers, from special Trial Spawners.",
+"Hostile. Uses wind charges and jumps around.",
+"30 HP (15 hearts).",
+"1 Breeze Rod.",
+"Wind charges can move entities and activate certain blocks. The Breeze is especially mobile."
+],
+
+"Camel": [
+"Overworld: Deserts, usually near Desert Villages.",
+"Passive. Can be ridden by up to two players.",
+"32 HP (16 hearts).",
+"No regular drops.",
+"Camels can dash forward and walk over some small obstacles. They are tall enough to keep riders out of reach of many ground-based hostile mobs."
+],
+
+"Camel Husk": [
+"Overworld: Desert-related areas, depending on the current Java Edition version and spawn rules.",
+"Hostile variant of the Camel.",
+"32 HP (16 hearts).",
+"Check the current version's loot table for exact drops.",
+"This is a hostile Camel variant. Its behavior and drops may differ from an ordinary Camel."
+],
+
+"Cat": [
+"Overworld: Villages and Swamp Huts.",
+"Passive. Usually runs away from players unless tamed.",
+"10 HP (5 hearts).",
+"0–2 String when killed. A tamed cat may bring a morning gift to its owner.",
+"Cats scare Creepers and Phantoms. There are several coat patterns."
+],
+
+"Cave Spider": [
+"Overworld: Abandoned Mineshafts, from cave spider spawners.",
+"Hostile. Can poison players on Normal and Hard difficulty.",
+"12 HP (6 hearts).",
+"0–2 String and 0–1 Spider Eye.",
+"Cave Spiders are smaller than ordinary Spiders and can fit through spaces that ordinary Spiders cannot."
+],
+
+"Chicken": [
+"Overworld: Many grassy biomes, including plains, forests and jungles.",
+"Passive.",
+"4 HP (2 hearts).",
+"0–2 Feathers and 1 Raw Chicken. If killed while burning, it drops 1 Cooked Chicken instead.",
+"Chickens lay eggs over time. Baby chickens are very small and do not take fall damage."
+],
+
+"Cod": [
+"Overworld: Oceans and some rivers.",
+"Passive aquatic mob.",
+"3 HP (1.5 hearts).",
+"1 Raw Cod. Up to 2 extra Raw Cod can drop with Looting. Cooked Cod if killed while burning.",
+"Cod swim in groups and can be caught with a fishing rod."
+],
+
+"Copper Golem": [
+"Overworld: Created by a player using a Copper Block and a Carved Pumpkin.",
+"Utility mob. Sorts items using Copper Chests.",
+"12 HP (6 hearts).",
+"Can drop Copper Ingots when it oxidizes or is defeated, depending on its state and the game version.",
+"Copper Golems oxidize over time. Wax can prevent further oxidation."
+],
+
+"Cow": [
+"Overworld: Many grassy biomes, including plains and forests.",
+"Passive.",
+"10 HP (5 hearts).",
+"1–3 Raw Beef and 0–2 Leather. Cooked Beef if killed while burning.",
+"Cows can be milked with a Bucket and bred with Wheat."
+],
+
+"Creaking": [
+"Overworld: Pale Garden biome, connected to a Creaking Heart.",
+"Hostile. Moves when it is not being watched.",
+"1 HP, but protected by its Creaking Heart.",
+"No normal drops from the Creaking itself.",
+"The Creaking is controlled by a Creaking Heart. Looking directly at it stops its movement."
+],
+
+"Creeper": [
+"Overworld: Dark areas where hostile mobs can spawn.",
+"Hostile. Approaches players and explodes.",
+"20 HP (10 hearts).",
+"0–2 Gunpowder. A Music Disc can drop if a Skeleton or Stray kills it.",
+"Creepers are afraid of Cats and Ocelots. Their original design came from a failed Pig model."
+],
+
+"Dolphin": [
+"Overworld: Non-frozen oceans.",
+"Neutral. Can attack when provoked.",
+"10 HP (5 hearts).",
+"0–1 Raw Cod.",
+"Dolphins can lead players toward nearby shipwrecks or ocean ruins when fed fish. They give players Dolphin's Grace when swimming nearby."
+],
+
+"Donkey": [
+"Overworld: Plains and Savanna biomes.",
+"Passive. Can be tamed and ridden.",
+"53 HP (varies by individual).",
+"0–2 Leather.",
+"Donkeys can carry a Chest when equipped with one. Their health varies."
+],
+
+"Drowned": [
+"Overworld: Oceans and rivers, and from Zombies that drown underwater.",
+"Hostile. Can attack with melee attacks or a Trident.",
+"20 HP (10 hearts).",
+"0–2 Rotten Flesh. Rarely a Copper Ingot, Trident or Nautilus Shell, depending on equipment and conditions.",
+"Drowned can remain underwater indefinitely. Some spawn holding Tridents."
+],
+
+"Elder Guardian": [
+"Overworld: Ocean Monuments, usually one in each wing and one in the center.",
+"Hostile. Attacks players with a laser and gives Mining Fatigue.",
+"80 HP (40 hearts).",
+"0–2 Prismarine Shards, 0–1 Prismarine Crystals, and 0–1 Raw Fish. Also drops a Wet Sponge.",
+"Elder Guardians are larger and stronger than regular Guardians. They cause Mining Fatigue to nearby players."
+],
+
+"Ender Dragon": [
+"The End: Central island.",
+"Hostile boss. Flies around the island and attacks players.",
+"200 HP (100 hearts).",
+"Dragon Egg on the first defeat. 12,000 XP on the first defeat and 500 XP on later respawned defeats.",
+"The Ender Dragon can be respawned using four End Crystals. It is the final boss of the End dimension."
+],
+
+"Enderman": [
+"Overworld, Nether and The End. In the Overworld, often in dark areas.",
+"Neutral. Becomes hostile when looked at directly in the eyes or attacked.",
+"40 HP (20 hearts).",
+"0–1 Ender Pearl. Looting can increase the maximum.",
+"Endermen can teleport and pick up certain blocks. Water damages them."
+],
+
+"Endermite": [
+"The End: Can rarely appear when a player uses an Ender Pearl. Can also be summoned.",
+"Hostile toward players.",
+"8 HP (4 hearts).",
+"5 XP when killed by a player. No regular item drops.",
+"Endermites are the smallest hostile mobs. Endermen attack nearby Endermites."
+],
+
+"Evoker": [
+"Overworld: Woodland Mansions and some Raid waves.",
+"Hostile. Uses magic to summon Vexes and fangs.",
+"24 HP (12 hearts).",
+"0–1 Totem of Undying. Also may drop Emeralds.",
+"Evokers are spellcasters. Their Totem of Undying can save a player from a normally fatal hit."
+],
+
+"Fox": [
+"Overworld: Taiga, Snowy Taiga, Old Growth Pine Taiga, Old Growth Spruce Taiga and Grove biomes.",
+"Passive. Usually avoids players.",
+"10 HP (5 hearts).",
+"0–1 item the Fox is holding. Sweet Berries may also be dropped in some situations.",
+"Foxes can pick up items and sleep during the day. They may spawn holding an item."
+],
+
+"Frog": [
+"Overworld: Swamps and Mangrove Swamps. Tadpoles grow into different Frog variants depending on temperature.",
+"Passive.",
+"10 HP (5 hearts).",
+"No regular drops.",
+"Frogs eat small Slimes and Magma Cubes. They produce different Froglights when eating small Magma Cubes."
+],
+
+"Ghast": [
+"Nether: Nether Wastes, Soul Sand Valleys and Basalt Deltas.",
+"Hostile. Shoots explosive fireballs.",
+"10 HP (5 hearts).",
+"0–2 Ghast Tears and 0–3 Gunpowder.",
+"Ghasts make a distinctive crying sound. Their fireballs can be deflected."
+],
+
+"Giant": [
+"Not naturally spawning in normal survival gameplay. Can be summoned.",
+"Hostile Zombie-like mob.",
+"100 HP (50 hearts).",
+"5 XP. No regular item drops.",
+"Giants are enormous Zombie variants. They are not part of ordinary natural mob spawning."
+],
+
+"Glow Squid": [
+"Overworld: Underground water, usually in caves.",
+"Passive aquatic mob.",
+"10 HP (5 hearts).",
+"1–3 Glow Ink Sacs.",
+"Glow Squids produce glowing particles. Their ink is used to make glowing signs."
+],
+
+"Goat": [
+"Overworld: Mountain biomes, including Frozen Peaks, Jagged Peaks and Snowy Slopes.",
+"Usually passive. Can ram entities that stand in its path.",
+"10 HP (5 hearts).",
+"0–2 Goat Horns when a Goat rams a suitable block. No regular item drop when killed.",
+"Goats can jump very high. Some Goats are screaming Goats and behave more noisily."
+],
+
+"Guardian": [
+"Overworld: Ocean Monuments.",
+"Hostile. Uses a laser attack against players and aquatic mobs.",
+"30 HP (15 hearts).",
+"0–2 Prismarine Shards, 0–1 Prismarine Crystals and 0–1 Raw Fish.",
+"Guardians can swim quickly and use spikes to damage attackers."
+],
+
+"Happy Ghast": [
+"Overworld: Obtained by growing a Dried Ghast in water.",
+"Passive. Can be ridden by players using a Harness.",
+"20 HP (10 hearts).",
+"No regular drops.",
+"Happy Ghasts can carry multiple players. They are a friendly version of the Ghast."
+],
+
+"Hoglin": [
+"Nether: Crimson Forests.",
+"Hostile. Charges and attacks players.",
+"40 HP (20 hearts).",
+"2–4 Raw Porkchops and 0–1 Leather. Cooked Porkchops if killed while burning.",
+"Hoglins are afraid of Warped Fungi. They can be bred with Crimson Fungi."
+],
+
+"Horse": [
+"Overworld: Plains and Savanna biomes.",
+"Passive. Can be tamed and ridden.",
+"Variable: 15–30 HP (7.5–15 hearts).",
+"0–2 Leather.",
+"Horses have different colors and patterns. Their speed, jump strength and health vary."
+],
+
+"Husk": [
+"Overworld: Deserts.",
+"Hostile Zombie variant. Can cause Hunger with its attacks.",
+"20 HP (10 hearts).",
+"0–2 Rotten Flesh. Rarely an Iron Ingot, Carrot or Potato.",
+"Husks do not burn in sunlight. They can turn into ordinary Zombies when submerged in water."
+],
+
+"Illusioner": [
+"Not naturally spawning in normal survival gameplay. Can be summoned.",
+"Hostile. Uses a Bow and creates illusions of itself.",
+"32 HP (16 hearts).",
+"5 XP. No regular item drops.",
+"The Illusioner is an unused Illager variant. It can make copies of itself to confuse players."
+],
+
+"Iron Golem": [
+"Overworld: Villages. Can also be built by players using Iron Blocks and a Carved Pumpkin.",
+"Protective. Attacks hostile mobs and can become aggressive toward players who attack villagers or the Golem.",
+"100 HP (50 hearts).",
+"3–5 Iron Ingots and 0–2 Poppies.",
+"Iron Golems protect villagers. They can slowly repair themselves when damaged using Iron Ingots."
+],
+
+"Llama": [
+"Overworld: Savanna Plateau, Windswept Hills and Windswept Forest biomes.",
+"Neutral. Spits at attackers.",
+"Variable: 15–30 HP (7.5–15 hearts).",
+"0–2 Leather.",
+"Llamas can carry Chests. Their strength determines how many inventory slots the Chest provides."
+],
+
+"Magma Cube": [
+"Nether: Nether Wastes, Basalt Deltas and Nether Fortresses.",
+"Hostile. Jumps toward players and deals contact damage.",
+"Size-dependent: large 16 HP, medium 4 HP, small 1 HP.",
+"0–1 Magma Cream from large or medium Magma Cubes. Small ones drop no items.",
+"Magma Cubes split into smaller cubes when defeated. They are immune to fire and lava."
+],
+
+"Mannequin": [
+"Not naturally spawning. Available as a display entity in the relevant Java Edition version.",
+"Utility/display entity. Does not behave like an ordinary hostile or passive creature.",
+"20 HP in the game data.",
+"No normal mob drops.",
+"Mannequins are used to display equipment and poses. They are not ordinary living mobs."
+],
+
+"Mooshroom": [
+"Overworld: Mushroom Fields.",
+"Passive.",
+"10 HP (5 hearts).",
+"1–3 Raw Beef and 0–2 Leather. Shearing gives 5 Mushrooms and turns it into a Cow.",
+"Mooshrooms can be milked with a Bowl to get Mushroom Stew. They can also be milked with a Bucket."
+],
+
+"Mule": [
+"Not naturally spawning. Created by breeding a Horse and a Donkey.",
+"Passive. Can be tamed and ridden.",
+"Variable: 15–30 HP (7.5–15 hearts).",
+"0–2 Leather.",
+"Mules cannot reproduce. They can carry a Chest when equipped with one."
+],
+
+"Nautilus": [
+"Overworld: Ocean biomes.",
+"Neutral aquatic mob. Can attack when provoked.",
+"15 HP (7.5 hearts).",
+"Check the current version's loot table for exact drops.",
+"Nautiluses are aquatic mobs. They are associated with underwater exploration and can be ridden in the relevant game version."
+],
+
+"Ocelot": [
+"Overworld: Jungles and Bamboo Jungles.",
+"Passive. Runs away from players.",
+"10 HP (5 hearts).",
+"No regular item drops.",
+"Ocelots are not the same as Cats. They can scare Creepers and Phantoms."
+],
+
+"Panda": [
+"Overworld: Jungles and Bamboo Jungles.",
+"Usually neutral. Some personalities can become aggressive when provoked.",
+"20 HP (10 hearts).",
+"0–3 Bamboo when killed.",
+"Pandas have different personalities, including lazy, playful, worried and aggressive."
+],
+
+"Parched": [
+"Overworld: Desert-related areas, depending on the current Java Edition spawn rules.",
+"Hostile Skeleton variant.",
+"16 HP (8 hearts).",
+"Bone and Arrow drops; exact quantities can vary with Looting.",
+"Parched are a desert-themed Skeleton variant. Their attacks and appearance differ from ordinary Skeletons."
+],
+
+"Parrot": [
+"Overworld: Jungle biomes.",
+"Passive.",
+"6 HP (3 hearts).",
+"No regular drops.",
+"Parrots can imitate nearby hostile mob sounds. They can sit on a player's shoulder."
+],
+
+"Phantom": [
+"Overworld: Spawns in the sky when players have not slept for several in-game days.",
+"Hostile flying mob. Dives toward players.",
+"20 HP (10 hearts).",
+"0–1 Phantom Membrane.",
+"Phantom Membranes can repair Elytra in an Anvil and are used in Slow Falling potions."
+],
+
+"Pig": [
+"Overworld: Many grassy biomes, including plains and forests.",
+"Passive.",
+"10 HP (5 hearts).",
+"1–3 Raw Porkchops. Cooked Porkchops if killed while burning.",
+"Pigs can be ridden with a Saddle. Carrots, Potatoes and Beetroot can be used for breeding."
+],
+
+"Piglin": [
+"Nether: Nether Wastes, Crimson Forests and Bastion Remnants.",
+"Neutral by default. Attacks players who are not wearing suitable Gold Armor or who open containers nearby.",
+"16 HP (8 hearts).",
+"0–1 Rotten Flesh, Gold Nuggets or other equipment-related drops. Gold Ingots can drop from equipped Piglins.",
+"Piglins can barter with Gold Ingots. They become hostile if a player opens certain containers near them."
+],
+
+"Piglin Brute": [
+"Nether: Bastion Remnants.",
+"Hostile. Attacks players even when they wear Gold Armor.",
+"50 HP (25 hearts).",
+"0–1 Gold Axe and 0–1 Gold Nugget, plus XP.",
+"Piglin Brutes are stronger than ordinary Piglins and cannot barter with players."
+],
+
+"Pillager": [
+"Overworld: Pillager Outposts, patrols and Raids.",
+"Hostile. Uses a Crossbow.",
+"24 HP (12 hearts).",
+"0–2 Arrows and possibly a Crossbow. May drop an Ominous Banner when it is a patrol captain.",
+"Pillagers are members of the Illager group. They can appear in patrols and Raids."
+],
+
+"Polar Bear": [
+"Overworld: Snowy Plains, Ice Spikes and Frozen Ocean areas.",
+"Neutral. Adults can become hostile when cubs are nearby or when attacked.",
+"30 HP (15 hearts).",
+"0–2 Raw Cod or 0–2 Raw Salmon.",
+"Polar Bear cubs are passive. Adults protect nearby cubs."
+],
+
+"Pufferfish": [
+"Overworld: Warm and lukewarm ocean biomes.",
+"Neutral. Inflates and poisons nearby players or mobs.",
+"3 HP (1.5 hearts).",
+"1 Pufferfish.",
+"Pufferfish inflate when threatened. They can be used to brew Potions of Water Breathing."
+],
+
+"Rabbit": [
+"Overworld: Deserts, Flower Forests, Taigas, Snowy Plains and other suitable biomes.",
+"Passive, but can be hostile in the special Killer Bunny form if summoned.",
+"3 HP (1.5 hearts).",
+"0–1 Rabbit Hide, 0–1 Raw Rabbit and rarely a Rabbit's Foot.",
+"Rabbits have several coat colors depending on their biome. They can jump over small obstacles."
+],
+
+"Ravager": [
+"Overworld: Raids.",
+"Hostile. Charges and attacks players, villagers and other targets.",
+"100 HP (50 hearts).",
+"1 Saddle and 20 XP.",
+"Ravagers can destroy certain crops and leaves. They can roar and knock back nearby entities."
+],
+
+"Salmon": [
+"Overworld: Rivers and cold, lukewarm or frozen ocean biomes.",
+"Passive aquatic mob.",
+"3 HP (1.5 hearts).",
+"1 Raw Salmon. Cooked Salmon if killed while burning.",
+"Salmon can spawn in groups and come in different sizes."
+],
+
+"Sheep": [
+"Overworld: Many grassy biomes.",
+"Passive.",
+"8 HP (4 hearts).",
+"1 Wool if not sheared, plus 1–2 Raw Mutton. Cooked Mutton if killed while burning.",
+"Sheep can be dyed in many colors. Shearing gives wool without killing the Sheep."
+],
+
+"Shulker": [
+"The End: End Cities.",
+"Hostile. Shoots homing bullets that cause Levitation.",
+"30 HP (15 hearts).",
+"0–1 Shulker Shell.",
+"Shulkers hide inside shells and can teleport to nearby blocks. Two Shulker Shells are used to craft a Shulker Box."
+],
+
+"Silverfish": [
+"Overworld: Strongholds, infested blocks and some mountains.",
+"Hostile. Attacks players and can call nearby Silverfish.",
+"8 HP (4 hearts).",
+"5 XP. No regular item drops.",
+"Silverfish can hide inside infested stone blocks. Nearby Silverfish may join a fight."
+],
+
+"Skeleton": [
+"Overworld: Dark areas, Dungeons and some structures. Also appears in Nether Fortresses as Wither Skeletons instead.",
+"Hostile. Uses a Bow to attack from a distance.",
+"20 HP (10 hearts).",
+"0–2 Bones and 0–2 Arrows. May also drop its Bow.",
+"Skeletons burn in direct sunlight. A Skeleton can drop a Music Disc if it kills a Creeper."
+],
+
+"Skeleton Horse": [
+"Overworld: Can appear during Skeleton Horse traps in thunderstorms.",
+"Passive. Can be tamed and ridden.",
+"15 HP (7.5 hearts).",
+"No regular item drops.",
+"Skeleton Horses can be ridden underwater without drowning the rider."
+],
+
+"Slime": [
+"Overworld: Swamps at night and specific chunks below Y=40.",
+"Hostile. Jumps toward players.",
+"Size-dependent: large 16 HP, medium 4 HP, small 1 HP.",
+"0–2 Slimeballs from small Slimes. Large and medium Slimes split into smaller ones.",
+"Slimes split into smaller Slimes when defeated. Small Slimes drop Slimeballs."
+],
+
+"Sniffer": [
+"Overworld: Obtained by hatching Sniffer Eggs. Does not naturally spawn as an adult.",
+"Passive.",
+"14 HP (7 hearts).",
+"No regular drops.",
+"Sniffers can find ancient seeds, including Torchflower Seeds and Pitcher Pods. They are one of the largest passive mobs."
+],
+
+"Spider": [
+"Overworld: Dark areas, caves and Monster Spawners.",
+"Neutral in sufficient light, hostile in darkness.",
+"16 HP (8 hearts).",
+"0–2 String and 0–1 Spider Eye.",
+"Spiders can climb walls. They are less aggressive in bright conditions."
+],
+
+"Squid": [
+"Overworld: Rivers and oceans.",
+"Passive aquatic mob.",
+"10 HP (5 hearts).",
+"1–3 Ink Sacs.",
+"Squids release ink when attacked. They can swim in groups."
+],
+
+"Stray": [
+"Overworld: Snowy Plains, Ice Spikes and Frozen Peaks.",
+"Hostile Skeleton variant. Shoots Arrows of Slowness.",
+"20 HP (10 hearts).",
+"0–2 Bones and 0–2 Arrows. May drop its Bow.",
+"Strays are covered in snow and their arrows slow down targets."
+],
+
+"Strider": [
+"Nether: Lava lakes.",
+"Passive. Can be ridden with a Saddle and steered with a Warped Fungus on a Stick.",
+"20 HP (10 hearts).",
+"0–5 String.",
+"Striders can walk on lava. They become cold and change color when outside lava."
+],
+
+"Sulfur Cube": [
+"Overworld: Appears in the relevant sulfur-related areas and structures in the current Java Edition version.",
+"Passive. Has special bouncing and interaction behavior.",
+"20 HP (10 hearts).",
+"Check the current version's loot table for exact drops.",
+"Sulfur Cubes are a newer mob. Their behavior and drops can depend on the version."
+],
+
+"Tadpole": [
+"Overworld: In water, after Frogs lay Frogspawn.",
+"Passive aquatic baby mob.",
+"6 HP (3 hearts).",
+"No regular drops.",
+"Tadpoles grow into Frogs. The biome temperature where they grow determines the Frog variant."
+],
+
+"Trader Llama": [
+"Overworld: Appears with Wandering Traders.",
+"Neutral. Spits at attackers.",
+"Variable: 15–30 HP (7.5–15 hearts).",
+"0–2 Leather.",
+"Trader Llamas follow the Wandering Trader. They can be equipped with decorative carpets."
+],
+
+"Tropical Fish": [
+"Overworld: Warm Oceans and Lush Caves.",
+"Passive aquatic mob.",
+"3 HP (1.5 hearts).",
+"1 Tropical Fish.",
+"There are thousands of possible color and pattern combinations for Tropical Fish."
+],
+
+"Turtle": [
+"Overworld: Beaches, especially warm beaches.",
+"Passive.",
+"30 HP (15 hearts).",
+"0–2 Seagrass. A Baby Turtle drops 1 Scute when it grows into an adult.",
+"Turtles lay eggs on the beach where they were born. Baby Turtles drop Scutes when they grow up."
+],
+
+"Vex": [
+"Overworld: Summoned by Evokers.",
+"Hostile. Flies through blocks and attacks with an Iron Sword.",
+"14 HP (7 hearts).",
+"5 XP. No regular item drops.",
+"Vexes can fly through solid blocks. They disappear after a limited time."
+],
+
+"Villager": [
+"Overworld: Villages. Can also be created through breeding.",
+"Passive. Trades with players and runs away from danger.",
+"20 HP (10 hearts).",
+"No regular drops.",
+"Villagers have different professions and trade offers. Their job depends on their workstation."
+],
+
+"Vindicator": [
+"Overworld: Woodland Mansions and Raids.",
+"Hostile. Attacks with an Iron Axe.",
+"24 HP (12 hearts).",
+"0–1 Emerald and possibly its Iron Axe.",
+"Vindicators are Illagers. They can become especially dangerous during Raids."
+],
+
+"Wandering Trader": [
+"Overworld: Appears near players after a period of time.",
+"Passive. Offers trades and tries to avoid danger.",
+"20 HP (10 hearts).",
+"0–2 Leads. Its Llamas may also drop items if defeated.",
+"The Wandering Trader sells items from different biomes and regions. It eventually despawns."
+],
+
+"Warden": [
+"Overworld: Deep Dark biome, summoned by naturally generated Sculk Shriekers.",
+"Hostile. Detects vibrations and smells nearby entities.",
+"500 HP (250 hearts).",
+"1 Sculk Catalyst.",
+"The Warden cannot see. It relies on sound and smell and is designed to be avoided rather than fought."
+],
+
+"Witch": [
+"Overworld: Dark areas, Swamps, Witch Huts and Raids.",
+"Hostile. Throws harmful potions at players.",
+"26 HP (13 hearts).",
+"0–6 items, including Glass Bottles, Glowstone Dust, Gunpowder, Redstone, Spider Eyes, Sugar or Sticks.",
+"Witches drink potions to protect themselves. They can use healing, fire resistance and water breathing potions."
+],
+
+"Wither": [
+"Not naturally spawning. Created by players using Soul Sand or Soul Soil and Wither Skeleton Skulls.",
+"Hostile boss. Flies and shoots explosive Wither Skulls.",
+"300 HP (150 hearts) in Java Edition.",
+"1 Nether Star.",
+"The Wither can break many blocks. Its Nether Star is used to craft a Beacon."
+],
+
+"Wither Skeleton": [
+"Nether: Nether Fortresses.",
+"Hostile. Attacks with a Stone Sword and can inflict the Wither effect.",
+"20 HP (10 hearts).",
+"0–2 Bones, 0–1 Coal and rarely a Wither Skeleton Skull.",
+"Three Wither Skeleton Skulls are needed to summon the Wither."
+],
+
+"Wolf": [
+"Overworld: Several forest, taiga, grove and other biomes, depending on its coat variant.",
+"Neutral when wild. Can be tamed and become protective.",
+"8 HP (4 hearts) when wild; tamed Wolves have more health.",
+"No regular item drops.",
+"Tamed Wolves defend their owners. Different biomes have different Wolf coat variants."
+],
+
+"Zoglin": [
+"Not naturally spawning. Created when a Hoglin stays in the Overworld or End for too long.",
+"Hostile. Attacks almost every nearby living mob.",
+"40 HP (20 hearts).",
+"0–1 Rotten Flesh.",
+"Zoglins are zombified Hoglins. Unlike Hoglins, they cannot be bred or scared by Warped Fungi."
+],
+
+"Zombie": [
+"Overworld: Dark areas, Dungeons and other structures.",
+"Hostile. Chases and attacks players and villagers.",
+"20 HP (10 hearts).",
+"0–2 Rotten Flesh. Rarely an Iron Ingot, Carrot or Potato.",
+"Zombies burn in sunlight. Some can pick up items and equipment."
+],
+
+"Zombie Horse": [
+"Not naturally spawning in ordinary survival gameplay. Can be summoned or encountered through special features.",
+"Passive. Can be ridden.",
+"25 HP (12.5 hearts).",
+"No regular item drops.",
+"Zombie Horses are undead Horse variants. They do not burn in sunlight."
+],
+
+"Zombie Nautilus": [
+"Overworld: Ocean biomes, depending on the current Java Edition spawn rules.",
+"Neutral aquatic undead mob.",
+"15 HP (7.5 hearts).",
+"Check the current version's loot table for exact drops.",
+"Zombie Nautiluses are undead Nautilus variants. Their behavior differs from ordinary Nautiluses."
+],
+
+"Zombie Villager": [
+"Overworld: Can spawn naturally or when a Villager is killed by a Zombie under suitable difficulty conditions.",
+"Hostile. Attacks players and villagers.",
+"20 HP (10 hearts).",
+"0–2 Rotten Flesh. Rarely an Iron Ingot, Carrot or Potato.",
+"Zombie Villagers can be cured using a Splash Potion of Weakness and a Golden Apple."
+],
+
+"Zombified Piglin": [
+"Nether: Nether Wastes and other Nether areas. Can also appear when a Piglin enters the Overworld.",
+"Neutral until one is attacked. Nearby Zombified Piglins then become hostile.",
+"20 HP (10 hearts).",
+"0–1 Rotten Flesh and 0–1 Gold Nugget. Rarely a Gold Ingot or its Golden Sword.",
+"Zombified Piglins travel in groups. Attacking one can cause nearby members to attack too."
+]
+
+};
 
 const mobList = document.getElementById("mobList");
 const searchInput = document.getElementById("mobSearch");
@@ -275,15 +1023,28 @@ function renderMobs() {
 
 function showMob(name) {
 
+    const info = mobData[name];
+
     document.getElementById("mobName").textContent = name;
 
-    document.getElementById("mobInfo").textContent =
-        "Detailed information for this mob has not been added to this page yet.";
-
-    const wikiSlug = name.replaceAll(" ", "_");
-
-    document.getElementById("wikiLink").href =
-        "https://minecraft.wiki/w/" + encodeURIComponent(wikiSlug);
+    if (info) {
+        document.getElementById("mobSpawn").textContent = info[0];
+        document.getElementById("mobBehavior").textContent = info[1];
+        document.getElementById("mobHealth").textContent = info[2];
+        document.getElementById("mobDrops").textContent = info[3];
+        document.getElementById("mobFacts").textContent = info[4];
+    } else {
+        document.getElementById("mobSpawn").textContent =
+            "Information not available yet.";
+        document.getElementById("mobBehavior").textContent =
+            "Information not available yet.";
+        document.getElementById("mobHealth").textContent =
+            "Information not available yet.";
+        document.getElementById("mobDrops").textContent =
+            "Information not available yet.";
+        document.getElementById("mobFacts").textContent =
+            "Information not available yet.";
+    }
 
     listSection.style.display = "none";
     detailsSection.style.display = "block";
@@ -326,4 +1087,3 @@ if (location.hash) {
 
 </body>
 </html>
-
